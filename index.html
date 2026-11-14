@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Android Camera Security Test</title>
+<style>
+body {
+  background: #101827;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 30px 15px;
+}
+button {
+  padding: 14px 22px;
+  margin: 8px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+#start { background: #16a34a; color: white; }
+#stop { background: #dc2626; color: white; }
+video {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 12px;
+  margin-top: 20px;
+  background: black;
+}
+</style>
+</head>
+<body>
+
+<h2>Android Camera Security Test</h2>
+<p>Authorized camera permission demonstration</p>
+
+<button id="start">Request Camera Permission</button>
+<button id="stop">Stop Camera</button>
+
+<p id="status">Camera is not active.</p>
+
+<video id="camera" autoplay playsinline></video>
+
+<script>
+const video = document.getElementById("camera");
+const status = document.getElementById("status");
+let stream = null;
+
+document.getElementById("start").onclick = async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false
+    });
+
+    video.srcObject = stream;
+    status.textContent = "Camera permission granted.";
+  } catch (error) {
+    status.textContent = "Camera access denied or unavailable: " + error.name;
+  }
+};
+
+document.getElementById("stop").onclick = () => {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  video.srcObject = null;
+  status.textContent = "Camera stopped.";
+};
+</script>
+
+</body>
+</html>
